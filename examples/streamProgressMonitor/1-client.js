@@ -7,20 +7,20 @@ const path = require('node:path');
 const socket = net.createConnection(1418, 'localhost');
 
 let isReadyToWrite = false;
-let headers = undefined;
+let metadata = null;
 let ws = null;
 let receivedBytes = 0;
 
 const createWritable = () => {
-  const filename = path.basename(headers.filename);
-  ws = fs.createWriteStream(filename + '.copy');
+  const filename = path.basename(metadata.filename);
+  ws = fs.createWriteStream(filename);
   isReadyToWrite = true;
 };
 
 const getMetadata = (data) => {
   try {
     const { size, filename } = JSON.parse(data);
-    headers = { size, filename };
+    metadata = { size, filename };
   } catch (e) {
     console.log(e);
   }
@@ -28,7 +28,7 @@ const getMetadata = (data) => {
 
 const monitoringDownloadProgress = (data) => {
   receivedBytes += data.byteLength;
-  const { size } = headers;
+  const { size } = metadata;
   const progress = Math.floor((receivedBytes / size) * 100);
   process.stdout.clearLine();
   process.stdout.cursorTo(0);

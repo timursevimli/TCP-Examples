@@ -20,7 +20,7 @@ const addSocketHandlers = (socket) => {
   });
 };
 
-const header = { size, filename };
+const metadata = { size, filename };
 
 // TODO convert this fn to transform stream and pipe from this
 const monitoringUploadProgress = (stream) => {
@@ -36,7 +36,7 @@ const monitoringUploadProgress = (stream) => {
 
 const server = net.createServer(async (socket) => {
   addSocketHandlers(socket);
-  socket.write(JSON.stringify(header));
+  socket.write(JSON.stringify(metadata));
   await setTimeout(1000);
   const rs = fs.createReadStream(filename);
   monitoringUploadProgress(rs);
