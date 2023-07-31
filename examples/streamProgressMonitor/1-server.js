@@ -10,6 +10,7 @@ const filename = '../video.mp4';
 const { size } = fs.statSync(filename);
 
 const addSocketHandlers = (socket) => {
+  socket.setNoDelay(true);
   console.log('Client connected:', socket.remoteAddress);
   socket.on('error', console.error);
   socket.on('data', (buffer) => {
