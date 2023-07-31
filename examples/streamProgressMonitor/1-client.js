@@ -27,8 +27,8 @@ const getMetadata = (data) => {
   }
 };
 
-const monitoringDownloadProgress = (data) => {
-  receivedBytes += data.byteLength;
+const monitoringDownloadProgress = (byteLength) => {
+  receivedBytes += byteLength;
   const { size } = metadata;
   const progress = Math.floor((receivedBytes / size) * 100);
   process.stdout.clearLine();
@@ -42,7 +42,7 @@ const monitoringDownloadProgress = (data) => {
 
 socket.on('data', (buffer) => {
   if (isReadyToWrite) {
-    monitoringDownloadProgress(buffer);
+    monitoringDownloadProgress(buffer.byteLength);
     ws.write(buffer);
     return;
   }
