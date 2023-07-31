@@ -10,6 +10,7 @@ let isReadyToWrite = false;
 let metadata = null;
 let ws = null;
 let receivedBytes = 0;
+let begin = undefined;
 
 const createWritable = () => {
   const filename = path.basename(metadata.filename);
@@ -33,7 +34,10 @@ const monitoringDownloadProgress = (data) => {
   process.stdout.clearLine();
   process.stdout.cursorTo(0);
   process.stdout.write(`Download Progress: ${progress}%`);
-  if (receivedBytes === size) console.log('\nDownload finished!');
+  if (receivedBytes === size) {
+    const diff = Date.now() - begin;
+    console.log(`\nDownload finished!\nEstimated time: ${diff}ms`);
+  }
 };
 
 socket.on('data', (buffer) => {
@@ -48,7 +52,10 @@ socket.on('data', (buffer) => {
 
 socket.on('error', console.error);
 
+socket.on('close', () => void console.log('Connection closed!'));
+
 socket.on('connect', () => {
+  begin = Date.now();
   console.log('Client connected to server!');
   socket.write('Hello from client!');
 });
